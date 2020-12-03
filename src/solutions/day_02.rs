@@ -43,12 +43,12 @@ pub fn solve(input: &str) -> usize {
         .filter(|line| line.len() > 0)
         .map(|line| {
             let parts: Vec<&str> = line.split_whitespace().collect();
-            let bound_parts: Vec<usize> = parts[0].split('-').map(|part| part.parse().unwrap()).collect();
+            let pos_parts: Vec<usize> = parts[0].split('-').map(|part| part.parse().unwrap()).collect();
             let characters: Vec<char> = parts[1].chars().collect();
             
             Entry {
-                pos_1: bound_parts[0],
-                pos_2: bound_parts[1],
+                pos_1: pos_parts[0],
+                pos_2: pos_parts[1],
                 character: characters[0],
                 password: parts[2].chars().collect(),
             }
