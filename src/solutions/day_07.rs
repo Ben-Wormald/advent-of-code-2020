@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::collections::HashSet;
 
-pub fn solve(input: &str) -> usize {
+pub fn solve_part_one(input: &str) -> usize {
     let mut containers = HashMap::new();
     input
         .lines()
@@ -44,4 +44,44 @@ pub fn solve(input: &str) -> usize {
 
     bag_containers.remove(initial_bag);
     bag_containers.len()
+}
+
+#[derive(Debug)]
+struct Containee {
+    name: String,
+    count: usize,
+}
+
+pub fn solve(input: &str) -> usize {
+    let mut containers = HashMap::new();
+    input
+        .lines()
+        .for_each(|line| {
+            let parts: Vec<&str> = line.split(" bags contain ").collect();
+            let container = parts[0];
+
+            let contains = parts[1];
+            let mut containees: Vec<Containee> = Vec::new();
+            if contains != "no other bags." {
+                contains.split(", ").for_each(|containee| {
+                    let containee_words: Vec<&str> = containee.split_whitespace().collect();
+                    let name = format!("{} {}", containee_words[1], containee_words[2]);
+                    let count: usize = containee_words[0].parse().expect("oh no");
+                    containees.push(Containee {
+                        name,
+                        count,
+                    });
+                });
+            }
+            containers.insert(container, containees);
+        });
+
+    let initial_bag = "shiny gold";
+    get_containees(initial_bag, &containers) - 1
+}
+
+fn get_containees(container: &str, containers: &HashMap<&str, Vec<Containee>>) -> usize {
+    containers.get(container).expect("oh no").iter().fold(1, |sum, containee| {
+        sum + containee.count * get_containees(&containee.name, &containers)
+    })
 }
