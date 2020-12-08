@@ -1,11 +1,11 @@
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 enum Op {
     Nop(isize),
     Acc(isize),
     Jmp(isize),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 struct Instruction {
     op: Op,
     visited: bool,
@@ -32,7 +32,7 @@ fn process_input(input: &str) -> Vec<Instruction> {
         .collect()
 }
 
-pub fn solve(input: &str) -> isize {
+pub fn solve_part_one(input: &str) -> isize {
     let mut instructions = process_input(input);
 
     let mut acc: isize = 0;
@@ -56,4 +56,44 @@ pub fn solve(input: &str) -> isize {
     }
 
     acc
+}
+
+pub fn solve(input: &str) -> isize {
+    let instructions = process_input(input);
+    run(0, 0, instructions.clone(), false).unwrap()
+}
+
+fn run(ptr: usize, acc: isize, mut instructions: Vec<Instruction>, fixed: bool) -> Option<isize> {
+    if ptr >= instructions.len() {
+        return Some(acc)
+    }
+
+    if instructions[ptr].visited {
+        return None
+    }
+    instructions[ptr].visited = true;
+    
+    match instructions[ptr].op {
+        Op::Nop(value) => {
+            match run(ptr + 1, acc, instructions.clone(), fixed) {
+                Some(n) => Some(n),
+                None => match fixed {
+                    false => run(((ptr as isize) + value) as usize, acc, instructions.clone(), true),
+                    true => None,
+                }
+            }
+        },
+        Op::Acc(value) => {
+            run(ptr + 1, acc + value, instructions.clone(), fixed)
+        },
+        Op::Jmp(value) => {
+            match run(((ptr as isize) + value) as usize, acc, instructions.clone(), fixed) {
+                Some(n) => Some(n),
+                None => match fixed {
+                    false => run(ptr + 1, acc, instructions.clone(), true),
+                    true => None,
+                },
+            }
+        },
+    }
 }
