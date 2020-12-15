@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-// only ~2 mins to brute force pt 2 with the same solution...
+// just under a minute to brute force pt 2 with the same solution...
 const TURNS: usize = 30000000;
 
 pub fn solve(input: &str) -> usize {
