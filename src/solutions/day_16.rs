@@ -177,10 +177,7 @@ fn get_departure_values(ticket: &Vec<usize>, field_names: &Vec<String>) -> Vec<u
         .iter()
         .cloned()
         .enumerate()
-        .filter(|(i, _)| {
-            let field_name = &field_names[*i];
-            field_name.len() > 8 && &field_name[..9] == "departure"
-        })
+        .filter(|(i, _)| field_names[*i].starts_with("departure"))
         .map(|(_, value)| value)
         .collect()
 }
