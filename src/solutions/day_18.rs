@@ -25,7 +25,7 @@ pub fn solve(input: &str) -> usize {
         .fold(0, |sum, result| sum + result)
 }
 
-fn process(symbols: &[&str]) -> Symbol {
+fn process_part_one(symbols: &[&str]) -> Symbol {
     let mut bracket_depth = 0;
     let mut open_bracket = 0;
 
@@ -77,4 +77,58 @@ fn process(symbols: &[&str]) -> Symbol {
     }
 
     Symbol::Num(value.unwrap())
+}
+
+fn process(symbols: &[&str]) -> Symbol {
+    let mut bracket_depth = 0;
+    let mut open_bracket = 0;
+
+    let mut symbols_expanded = Vec::new();
+
+    for i in 0..symbols.len() {
+        match symbols[i] {
+            "(" => {
+                bracket_depth += 1;
+                if bracket_depth == 1 {
+                    open_bracket = i;
+                }
+            },
+            ")" => {
+                bracket_depth -= 1;
+                if bracket_depth == 0 {
+                    symbols_expanded.push(process(&symbols[(open_bracket + 1)..i]))
+                }
+            },
+            symbol => if bracket_depth == 0 {
+                match symbol {
+                    "+" => symbols_expanded.push(Symbol::Op(Op::Add)),
+                    "*" => symbols_expanded.push(Symbol::Op(Op::Multiply)),
+                    num => symbols_expanded.push(Symbol::Num(num.parse().unwrap())),
+                }
+            },
+        }
+    }
+
+    Symbol::Num(calculate(&symbols_expanded))
+}
+
+fn calculate(symbols: &[Symbol]) -> usize {
+    let mut multiplyer_pos: Option<usize> = None;
+    for i in 0..symbols.len() {
+        match symbols[i] {
+            Symbol::Op(Op::Multiply) => {
+                multiplyer_pos = Some(i);
+                break;
+            },
+            _ => ()
+        }
+    }
+
+    match multiplyer_pos {
+        None => symbols.iter().fold(0, |sum, symbol| match symbol {
+            Symbol::Num(num) => sum + num,
+            _ => sum
+        }),
+        Some(pos) => calculate(&symbols[..pos]) * calculate(&symbols[(pos + 1)..])
+    }
 }
