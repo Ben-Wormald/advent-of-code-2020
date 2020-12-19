@@ -60,13 +60,6 @@ fn process(input: &str) -> (HashMap<usize, Rule>, Vec<&str>) {
 }
 
 fn validate_word(word: &str, rule_ids: &[usize], rules: &HashMap<usize, Rule>) -> Result<usize, ()> {
-    if word.len() == 0 && rule_ids.len() == 0 {
-        return Ok(0);
-    }
-    else if (word.len() > 0 && rule_ids.len() == 0) || (word.len() == 0 && rule_ids.len() > 0) {
-        return Err(());
-    }
-
     let mut consumed = 0;
 
     for i in 0..rule_ids.len() {
@@ -93,7 +86,7 @@ fn validate_word(word: &str, rule_ids: &[usize], rules: &HashMap<usize, Rule>) -
                             options_consumed = option_consumed;
                             break;
                         },
-                        Err(()) => ()
+                        Err(()) => (),
                     }
                 }
 
