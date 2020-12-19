@@ -1,9 +1,9 @@
 #![allow(dead_code)]
 use std::fs;
 
-mod solutions { pub mod day_18; }
-use solutions::day_18::solve;
-const INPUT: &str = "./input/18";
+mod solutions { pub mod day_19; }
+use solutions::day_19::solve;
+const INPUT: &str = "./input/19";
 
 fn main() {
     let input = fs::read_to_string(INPUT).expect("oh no!");
